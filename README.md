@@ -36,4 +36,4 @@ Run the exploration notebook first to understand the data, then the model notebo
 
 ## Background
 
-Created for DAT410 (Design of AI Systems) at Chalmers University, Spring 2025. Group project with Elvina Fahlgren. Scored 100/100.
+Created for DAT410 (Design of AI Systems) at Chalmers University, Spring 2025. Group project with Elvina Fahlgren. Scored 100/100. The original course report is in `docs/report.pdf`.
