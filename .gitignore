@@ -1,0 +1,23 @@
+# Data
+*.json
+*.csv
+*.parquet
+data/
+
+# Checkpoints and model weights
+checkpoints/
+*.bin
+*.safetensors
+*.pt
+*.pth
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+.env
+
+# OS
+.DS_Store
