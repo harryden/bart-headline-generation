@@ -1,0 +1,9 @@
+accelerate==1.5.1
+datasets==3.3.2
+evaluate==0.4.3
+nltk==3.9.1
+numpy==1.26.4
+peft==0.14.0
+rouge_score==0.1.2
+torch==2.5.1
+transformers==4.49.0

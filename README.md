@@ -15,6 +15,7 @@ Key technical pieces:
 - Hugging Face `transformers`, `datasets`, `evaluate`, and `peft`
 - Exploratory analysis of the HuffPost News Category Dataset
 - Training and evaluation in Google Colab on an A100 GPU
+- Scriptable training, evaluation, and inference entry points for reproducibility
 
 ## Project Snapshot
 
@@ -49,12 +50,22 @@ For headline generation, BLEU is also a limited metric: many valid headlines can
 
 ```text
 .
+|-- configs/
+|   `-- default.json
 |-- docs/
 |   `-- report.pdf
 |-- notebooks/
 |   |-- 01_final_model.ipynb
 |   `-- 02_load_and_explore.ipynb
+|-- src/
+|   |-- data.py
+|   |-- evaluate.py
+|   |-- infer.py
+|   |-- metrics.py
+|   |-- modeling.py
+|   `-- train.py
 |-- .gitignore
+|-- requirements.txt
 `-- README.md
 ```
 
@@ -83,16 +94,71 @@ The training notebook also writes checkpoints to:
 
 ## Running the Project
 
-The current notebooks are designed for Google Colab.
+The original run was done in Google Colab. The repository now also includes script entry points so the workflow can be rerun outside the notebooks.
 
-Install dependencies in Colab:
+Install dependencies:
 
-```python
-!pip install --upgrade "transformers[torch]" datasets evaluate nltk rouge_score
-!pip install --upgrade accelerate peft
+```bash
+pip install -r requirements.txt
 ```
 
-Then:
+The default config expects the Kaggle dataset at:
+
+```text
+/content/drive/MyDrive/News_Category_Dataset_v3.json
+```
+
+To use a different location, edit `data.dataset_path` in [`configs/default.json`](configs/default.json).
+
+### Training
+
+```bash
+python -m src.train --config configs/default.json
+```
+
+This trains LoRA adapters with a fixed train/test split seed and writes checkpoints to:
+
+```text
+checkpoints/bart-lora-headline
+```
+
+### Evaluation
+
+Evaluate a trained adapter:
+
+```bash
+python -m src.evaluate \
+  --config configs/default.json \
+  --adapter-path checkpoints/bart-lora-headline/final
+```
+
+Omit `--adapter-path` to evaluate the base `facebook/bart-base` model as a baseline.
+
+For a quick smoke test on a smaller subset:
+
+```bash
+python -m src.evaluate \
+  --config configs/default.json \
+  --adapter-path checkpoints/bart-lora-headline/final \
+  --limit 100
+```
+
+The script writes aggregate metrics and sample predictions under `results/`.
+
+### Inference
+
+Generate a headline from one description:
+
+```bash
+python -m src.infer \
+  --config configs/default.json \
+  --adapter-path checkpoints/bart-lora-headline/final \
+  --text "A short news article description goes here."
+```
+
+Omit `--adapter-path` to generate with the base model.
+
+### Notebook Path
 
 1. Download `News_Category_Dataset_v3.json` from Kaggle.
 2. Upload it to the Google Drive path shown above.
@@ -103,11 +169,9 @@ Then:
 
 This repository currently preserves the course-project version of the work. Before treating it as a fully reproducible ML project, these items should be cleaned up:
 
-- Add a fixed random seed for the train/test split.
-- Pin dependencies in `requirements.txt` or `environment.yml`.
-- Replace hardcoded Colab paths with configurable paths.
 - Add markdown explanations inside the notebooks.
-- Resolve the mismatch between saved output at epoch 5 and `num_train_epochs=10` in the notebook.
+- Rerun the new script pipeline and commit a clean metric table plus sample predictions.
+- Add BERTScore and a stronger baseline comparison.
 - Add an inference-only demo path.
 - Add a license and clearer dataset usage notes.
 

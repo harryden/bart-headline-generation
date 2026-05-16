@@ -3,6 +3,10 @@
 *.csv
 *.parquet
 data/
+!configs/
+!configs/*.json
+results/*.json
+results/*.jsonl
 
 # Checkpoints and model weights
 checkpoints/
