@@ -4,18 +4,15 @@ Fine-tuning experiment for generating news headlines from short article descript
 
 This was built as a DAT410 Design of AI Systems course project at Chalmers University in Spring 2025 with Elvina Fahlgren. The project received 100/100, and the original course report is available at [`docs/report.pdf`](docs/report.pdf).
 
-## What This Project Shows
+## Technical Implementation
 
-The project explores whether parameter-efficient fine-tuning can adapt a pretrained sequence-to-sequence model to headline generation under limited compute.
+The project fine-tunes `facebook/bart-base` for headline generation from short article descriptions using Low-Rank Adaptation (LoRA):
 
-Key technical pieces:
-
-- Fine-tuning `facebook/bart-base` for description-to-headline generation
-- Parameter-efficient training with LoRA instead of updating all model weights
-- Hugging Face `transformers`, `datasets`, `evaluate`, and `peft`
-- Exploratory analysis of the HuffPost News Category Dataset
-- Training and evaluation in Google Colab on an A100 GPU
-- Scriptable training, evaluation, and inference entry points for reproducibility
+- Target modules: LoRA adapters applied to attention projection layers (`q_proj`, `v_proj`)
+- Parameter efficiency: updates 442,368 of 139,862,784 parameters (0.32%)
+- Stack: Hugging Face `transformers`, `peft`, `datasets`, and `evaluate`
+- Training configuration: batch size 16, fp16 mixed precision on an A100 GPU
+- CLI entry points: standalone scripts for training, evaluation, and single-input inference
 
 ## Project Snapshot
 
@@ -58,6 +55,8 @@ For headline generation, BLEU is also a limited metric: many valid headlines can
 |   |-- 01_final_model.ipynb
 |   `-- 02_load_and_explore.ipynb
 |-- src/
+|   |-- __init__.py
+|   |-- config.py
 |   |-- data.py
 |   |-- evaluate.py
 |   |-- infer.py
@@ -165,15 +164,9 @@ Omit `--adapter-path` to generate with the base model.
 3. Run the exploration notebook.
 4. Run the final model notebook on a GPU runtime.
 
-## Current Limitations
+## Project Scope and Limitations
 
-This repository currently preserves the course-project version of the work. Before treating it as a fully reproducible ML project, these items should be cleaned up:
-
-- Add markdown explanations inside the notebooks.
-- Rerun the new script pipeline and commit a clean metric table plus sample predictions.
-- Add BERTScore and a stronger baseline comparison.
-- Add an inference-only demo path.
-- Add a license and clearer dataset usage notes.
+This repository preserves the coursework implementation. Evaluation relies on n-gram token overlap (BLEU), which has limited correlation with semantic adequacy in abstractive headline generation. Model training was originally executed on Google Colab, and local script execution requires downloading the external Kaggle dataset.
 
 ## Authorship
 
