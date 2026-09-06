@@ -1,6 +1,6 @@
 # BART Headline Generation with LoRA
 
-Fine-tuning experiment for generating news headlines from short article descriptions using `facebook/bart-base` and LoRA adapters.
+Fine-tuned a small BART model with LoRA to generate headlines from article summaries.
 
 This was built as a DAT410 Design of AI Systems course project at Chalmers University of Technology in Spring 2025 with Elvina Fahlgren. The project received 100/100, and the original course report is available at [`docs/report.pdf`](docs/report.pdf).
 
